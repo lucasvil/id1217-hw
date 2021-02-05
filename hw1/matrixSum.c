@@ -104,7 +104,7 @@ int main(int argc, char* argv[]) {
       printf(" %d", matrix[i][j]);
     }
     printf(" ]\n");
-}
+  }
 #endif
   /* init max and min values */
   min = MAXVAL;
@@ -183,19 +183,5 @@ void* Worker(void* arg) {
     }
     pthread_mutex_unlock(&minLock);
   }
-
-  // pthread_mutex_lock(&sumLock);
-  // total += localSum;
-  // if (localMax > max) {
-  //   max = localMax;
-  //   maxX = localMaxX;
-  //   maxY = localMaxY;
-  // }
-  // if (localMin < min) {
-  //   min = localMin;
-  //   minX = localMinX;
-  //   minY = localMinY;
-  // }
-  // pthread_mutex_unlock(&sumLock);
   pthread_exit(NULL);
 }
