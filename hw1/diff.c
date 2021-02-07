@@ -105,6 +105,8 @@ void* consumer(void* arg) {
     /* one (or both) buffer is empty and neither is done, wait for producers */
     while (!done && (prod1.size == 0 || prod2.size == 0))
       pthread_cond_wait(&buff_empty, &buff_lock);
+    if ((done == 1) && (prod1.size == 0) && (prod2.size == 0)) // did not include in submission...
+      pthread_cond_wait(&buff_empty, &buff_lock);
     pthread_mutex_unlock(&buff_lock);
 
     /* buffers empty and done */
