@@ -130,7 +130,7 @@ void* Worker(void* arg) {
   localSum = 0;
   localMin = MAXVAL;
   localMax = MINVAL;
-  while (row < size) {
+  while (1) {
     /* take row lock and increment if there are tasks left */
     pthread_mutex_lock(&rowLock);
     if (row < size) {

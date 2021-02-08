@@ -81,11 +81,12 @@ void* producer(void* arg) {
     if (fgets(prod->buff[i], MAX_LINE_LENGTH, prod->fp) != NULL) {
       pthread_mutex_lock(&buff_lock);
       prod->size++;
-      i = (i+1) % MAX_BUFF_SIZE;
 
       /* signal consumer */
       pthread_cond_signal(&buff_empty);
       pthread_mutex_unlock(&buff_lock);
+
+      i = (i+1) % MAX_BUFF_SIZE;
     } else {
       /* producer is done, signal consumer */
       pthread_mutex_lock(&buff_lock);

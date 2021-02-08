@@ -20,7 +20,7 @@
 #include <sys/time.h>
 #define MAXSIZE 10000  /* maximum matrix size */
 #define MAXWORKERS 10   /* maximum number of workers */
-#define MAXVAL 1000; /* maximum value of element in matrix */
+#define MAXVAL 100; /* maximum value of element in matrix */
 #define MINVAL 0; /* minimum value of element in matrix */
 
 pthread_mutex_t barrier, sumLock, maxLock, minLock;  /* mutex lock for the barrier */
@@ -146,7 +146,7 @@ void* Worker(void* arg) {
   /* local sum, min, max values */
   localSum = 0;
   localMin = MAXVAL;
-  localMax = MINVAL;
+  localMax = MINVAL - 1;
   for (i = first; i <= last; i++) {
     for (j = 0; j < size; j++) {
       localSum += matrix[i][j];
