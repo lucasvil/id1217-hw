@@ -50,18 +50,24 @@ int main(int argc, char* argv[]) {
   }
 
   start_time = omp_get_wtime();
-#pragma omp parallel for reduction (+:total) private(j)
+#pragma omp parallel for reduction (+:total) private(j) shared(min, max)
   for (i = 0; i < size; i++)
     for (j = 0; j < size; j++) {
       if (max < matrix[i][j]) {
-        max = matrix[i][j];
-        maxX = i;
-        maxY = j;
+#pragma omp critical (max)
+        if (max < matrix[i][j]) {
+          max = matrix[i][j];
+          maxX = i;
+          maxY = j;
+        }
       }
       if (min > matrix[i][j]) {
-        min = matrix[i][j];
-        minX = i;
-        minY = j;
+#pragma omp critical (min)
+        if (min > matrix[i][j]) {
+          min = matrix[i][j];
+          minX = i;
+          minY = j;
+        }
       }
       total += matrix[i][j];
     }
