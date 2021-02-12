@@ -6,7 +6,7 @@ threads=$(seq 8)
 res_tmp="../tmp/res.tmp.txt"
 words_tmp="../tmp/words.tmp.txt"
 
-size=128
+size=2
 # clear result file
 for thread in $threads; do
   echo -n "" >../result/palindrome-speedup$thread.dat

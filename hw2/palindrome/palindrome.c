@@ -84,7 +84,7 @@ int main(int argc, char* argv[]) {
   FILE* fp_out = fopen("palindrome-result.txt", "w");
 
   printf("there are %d palindromic words in the file.\n", palindromes.size);
-  printf("time %g\n", end_time - start_time);
+  printf("time %.20f\n", end_time - start_time);
   printf("Writing result to 'palindrome-result.txt'...\n");
   for (int i = 0; i < palindromes.size; i++) {
     fputs(palindromes.buff[i], fp_out);
