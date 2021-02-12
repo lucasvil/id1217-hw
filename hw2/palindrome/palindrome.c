@@ -6,7 +6,7 @@
 #include <errno.h>
 
 #define MAX_WORD_LENGTH 50
-#define MAX_WORD_COUNT 30000
+#define MAX_WORD_COUNT 32768
 #define MAX_THREADS 8
 
 typedef struct WordBuffer {
@@ -26,8 +26,8 @@ int main(int argc, char* argv[]) {
     exit(-1);
   }
 
-  FILE* fp = fopen(argv[1], "r");
-  if (fp == NULL) {
+  FILE* fp_in = fopen(argv[1], "r");
+  if (fp_in == NULL) {
     // File not found
     fprintf(stderr, "File not found.\n");
     exit(-1);
@@ -44,16 +44,18 @@ int main(int argc, char* argv[]) {
   // read words from file
   char* word = malloc(MAX_WORD_LENGTH);
   int wlen = 0;
-  while (fgets(word, MAX_WORD_LENGTH, fp) != NULL) {
+  while (fgets(word, MAX_WORD_LENGTH, fp_in) != NULL) {
     wlen = strlen(word);
     if (word[wlen-1] == '\n') wlen--;
     words.buff[words.size] = malloc(wlen);
     memcpy(words.buff[words.size], word, wlen);
     words.size++;
   }
+  fclose(fp_in);
   free(word);
 
   start_time = omp_get_wtime();
+
   int j;
   int i;
 #pragma omp parallel for private(j)
@@ -74,18 +76,21 @@ int main(int argc, char* argv[]) {
         }
       }
     }
-  }
+  } // implicit barrier
+
   end_time = omp_get_wtime();
 
   // Output result
+  FILE* fp_out = fopen("palindrome-result.txt", "w");
+
   printf("there are %d palindromic words in the file.\n", palindromes.size);
-#ifdef DEBUG
-  printf("\nthey are as follows:\n");
-  for (int i = 0; i < palindromes.size; i++) {
-    printf("%s\n", palindromes.buff[i]);
-  }
-#endif
   printf("time %g\n", end_time - start_time);
+  printf("Writing result to 'palindrome-result.txt'...\n");
+  for (int i = 0; i < palindromes.size; i++) {
+    fputs(palindromes.buff[i], fp_out);
+    fputc('\n', fp_out);
+  }
+  fclose(fp_out);
 }
 
 // returns 1 if palindromic, 0 else

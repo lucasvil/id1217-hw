@@ -1,3 +1,5 @@
+result/
+tmp/
 .vscode/
 # Prerequisites
 *.d
