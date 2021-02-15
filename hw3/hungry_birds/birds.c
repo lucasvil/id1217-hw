@@ -49,7 +49,9 @@ void* parrent(void* arg) {
   while (TRUE) {
     sem_wait(&empty);
     printf("\nparrent bird is fetching worms... \n");
+#ifndef NOSLEEP
     sleep((rand()%4 + 2));
+#endif
     worms = *refill;
     printf("worms refilled!\n\n");
     sem_post(&full);
@@ -65,7 +67,9 @@ void* baby(void* arg) {
       worms--;
       sem_post(&full);
       printf("%d worms left. baby bird %ld is sleeping\n", worms, id);
+#ifndef NOSLEEP
       sleep((rand()%4 + 2));
+#endif
     } else {
       sem_post(&empty);
       printf("\n**bird %ld is chirping!**\n", id);
