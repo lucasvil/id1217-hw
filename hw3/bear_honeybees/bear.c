@@ -13,10 +13,9 @@
 #define MAX_PORTIONS 128
 #define MAX_BEES 15
 
-sem_t empty, full, potlock;
+sem_t full, potlock;
 int portions, numBees;
 int honeypot = 0;
-int sleepcount = 0;
 
 void* Bee(void* arg);
 void* Bear(void* arg);
@@ -33,7 +32,6 @@ int main(int argc, char* argv[]) {
   pthread_t bees[numBees];
 
   srand(time(NULL));
-  sem_init(&empty, FALSE, 1);
   sem_init(&potlock, FALSE, 1);
   sem_init(&full, FALSE, 0);
 
@@ -66,7 +64,6 @@ void* Bee(void* arg) {
         sem_post(&potlock);
         printf("**bee %ld is alerting the bear**\n\n", id);
         sem_post(&full);
-        sem_wait(&empty);
       }
     } else
       sem_post(&potlock);
@@ -86,9 +83,7 @@ void* Bear(void* arg) {
     honeypot = 0;
 
     // pot is empty
-    sem_post(&empty);
     printf("bear going back to sleep.\n\n");
     sem_post(&potlock);
-
   }
 }
