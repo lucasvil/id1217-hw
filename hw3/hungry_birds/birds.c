@@ -13,7 +13,7 @@
 #define MAX_WORMS 128
 #define MAX_BABY 7
 
-sem_t empty, full;
+sem_t empty, wormlock;
 int worms;
 
 void* parrent(void* arg);
@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
 
   srand(time(NULL));
   sem_init(&empty, FALSE, 0);
-  sem_init(&full, FALSE, 1);
+  sem_init(&wormlock, FALSE, 1);
 
   printf("Hungry birds starting with %d worms, and %d baby bird(s)\n", numWorm, numBaby);
   pthread_create(&p, NULL, parrent, &numWorm);
@@ -47,6 +47,7 @@ int main(int argc, char* argv[]) {
 void* parrent(void* arg) {
   int* refill = arg;
   while (TRUE) {
+    // wait for dish to be empty
     sem_wait(&empty);
     printf("\nparrent bird is fetching worms... \n");
 #ifndef NOSLEEP
@@ -54,25 +55,30 @@ void* parrent(void* arg) {
 #endif
     worms = *refill;
     printf("worms refilled!\n\n");
-    sem_post(&full);
+    sem_post(&wormlock);
   }
 }
 
 void* baby(void* arg) {
   long id = (long)arg;
   while (TRUE) {
-    sem_wait(&full);
-    printf("%d worms left. baby bird %ld has woken up\n", worms, id);
+    // take lock
+    sem_wait(&wormlock);
+    printf("baby bird %ld wants to eat... ", id);
+
+    // any worms left?
     if (worms > 0) {
       worms--;
-      sem_post(&full);
-      printf("%d worms left. baby bird %ld is sleeping\n", worms, id);
+      printf("It ate a worm! %d worms left\n", worms);
+      sem_post(&wormlock);
+
+      // go to sleep.
 #ifndef NOSLEEP
       sleep((rand()%4 + 2));
 #endif
     } else {
       sem_post(&empty);
-      printf("\n**bird %ld is chirping!**\n", id);
+      printf("No worms! bird %ld is chirping!\n", id);
     }
   }
 }
