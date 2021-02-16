@@ -16,8 +16,8 @@
 sem_t empty, wormlock;
 int worms;
 
-void* parent(void* arg);
-void* baby(void* arg);
+void* Parent(void* arg);
+void* Baby(void* arg);
 
 int main(int argc, char* argv[]) {
   if (argc < 3) {
@@ -36,15 +36,15 @@ int main(int argc, char* argv[]) {
   sem_init(&wormlock, FALSE, 1);
 
   printf("Hungry birds starting with %d worms, and %d baby bird(s)\n", numWorm, numBaby);
-  pthread_create(&p, NULL, parent, &numWorm);
+  pthread_create(&p, NULL, Parent, &numWorm);
   for (long i = 0; i < numBaby; i++)
-    pthread_create(&b[i], NULL, baby, (void*)i);
+    pthread_create(&b[i], NULL, Baby, (void*)i);
 
   pthread_exit(NULL);
 }
 
 
-void* parent(void* arg) {
+void* Parent(void* arg) {
   int* refill = arg;
   while (TRUE) {
     // wait for dish to be empty
@@ -59,7 +59,7 @@ void* parent(void* arg) {
   }
 }
 
-void* baby(void* arg) {
+void* Baby(void* arg) {
   long id = (long)arg;
   while (TRUE) {
     // take lock
