@@ -61,12 +61,10 @@ void* Bee(void* arg) {
       if (honeypot < portions) {
         sem_post(&potlock);
       } else {
-        sem_post(&potlock);
         printf("**bee %ld is alerting the bear**\n\n", id);
         sem_post(&full);
       }
-    } else
-      sem_post(&potlock);
+    }
   }
 }
 
@@ -76,7 +74,6 @@ void* Bear(void* arg) {
     printf("bear is awake! eating the honey...\n");
 
     // no bees in pot, eat honey
-    sem_wait(&potlock);
 #ifndef NOSLEEP
     sleep((rand()%4 + 2));
 #endif
