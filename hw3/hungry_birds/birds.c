@@ -13,7 +13,7 @@
 #define MAX_WORMS 128
 #define MAX_BABY 7
 
-sem_t empty, wormlock;
+sem_t empty, refill, wormlock;
 int worms;
 
 void* Parent(void* arg);
@@ -33,6 +33,7 @@ int main(int argc, char* argv[]) {
 
   srand(time(NULL));
   sem_init(&empty, FALSE, 0);
+  sem_init(&refill, FALSE, 0);
   sem_init(&wormlock, FALSE, 1);
 
   printf("Hungry birds starting with %d worms, and %d baby bird(s)\n", numWorm, numBaby);
@@ -45,7 +46,7 @@ int main(int argc, char* argv[]) {
 
 
 void* Parent(void* arg) {
-  int* refill = arg;
+  int* numWorm = arg;
   while (TRUE) {
     // wait for dish to be empty
     sem_wait(&empty);
@@ -53,9 +54,9 @@ void* Parent(void* arg) {
 #ifndef NOSLEEP
     sleep((rand()%4 + 2));
 #endif
-    worms = *refill;
+    worms = *numWorm;
     printf("worms refilled!\n\n");
-    sem_post(&wormlock);
+    sem_post(&refill);
   }
 }
 
@@ -79,6 +80,13 @@ void* Baby(void* arg) {
     } else {
       sem_post(&empty);
       printf("No worms! bird %ld is chirping!\n", id);
+      sem_wait(&refill);
+      worms--;
+      printf("baby bird %ld ate a worm! %d worms left\n", id, worms);
+      sem_post(&wormlock);
+#ifndef NOSLEEP
+      sleep((rand()%4 + 2));
+#endif
     }
   }
 }
