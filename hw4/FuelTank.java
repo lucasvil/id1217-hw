@@ -6,29 +6,25 @@ public class FuelTank implements Runnable {
   private final int nitrogenTank = 75;
   private final int quantumTank = 30;
   private final String id;
+  private final int rounds;
   private FuelStation station;
   private boolean type;
 
-  /**
-   * 
-   * @param station - Fuel Station
-   * @param id      - tanker id
-   * @param type    - true=nitrogen, false=quantum
-   */
-  public FuelTank(FuelStation station, String id, boolean type) {
+  public FuelTank(FuelStation station, String id, int rounds, boolean type) {
     this.station = station;
     this.id = id;
     this.type = type;
+    this.rounds = rounds;
   }
 
   public void run() {
     ThreadLocalRandom rand = ThreadLocalRandom.current();
     int fuel, nitrogen, quantum;
     boolean coin;
-    while (true) {
+    for (int i = 0; i < this.rounds; i++) {
       // vehicle travelling
       try {
-        Thread.sleep(rand.nextInt(10000, 15000));
+        Thread.sleep(rand.nextInt(5000, 10000));
 
         // make sure always at least one fuel type is needed
         coin = rand.nextBoolean();
@@ -50,5 +46,6 @@ public class FuelTank implements Runnable {
         e.printStackTrace();
       }
     }
+    System.out.println(this.id + " done!");
   }
 }

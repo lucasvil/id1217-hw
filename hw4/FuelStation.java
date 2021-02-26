@@ -26,8 +26,10 @@ public class FuelStation {
         refuel.wait();
       }
     }
+    // reserve fuel ammount before withdrawing
     reserveFuel(nitrogenAmmount, quantumAmmount);
 
+    // try to park
     while (!isParking()) {
       synchronized (parking) {
         System.out.println(id + " is waiting (parking)");
@@ -36,6 +38,8 @@ public class FuelStation {
     }
     occupiedSlots.getAndIncrement();
     System.out.printf("%s has taken a spot (%d/%d).\n", id, occupiedSlots.get(), slotsCap);
+
+    // refuel and then leave
     getFuel(nitrogenAmmount, quantumAmmount, id);
     releaseSpot(id);
     synchronized (fuelTank) {
@@ -44,6 +48,7 @@ public class FuelStation {
   }
 
   public void refillNitrogenTank(String id, int nitrogenRefill) throws InterruptedException {
+    System.out.printf("**%s has arrived.**\n", id);
     synchronized (fuelTank) {
       while (((nitrogenCap - nitrogenLevel.get()) < nitrogenRefill)) {
         fuelTank.wait();
@@ -59,6 +64,7 @@ public class FuelStation {
   }
 
   public void refillQuantumTank(String id, int quantumRefill) throws InterruptedException {
+    System.out.printf("**%s has arrived.**\n", id);
     synchronized (fuelTank) {
       while (((quantumCap - quantumLevel.get()) < quantumRefill)) {
         fuelTank.wait();

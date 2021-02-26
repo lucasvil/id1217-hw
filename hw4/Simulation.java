@@ -1,26 +1,26 @@
 public class Simulation {
-  private static final int nitroCap = 100;
-  private static final int quantumCap = 40;
+  private static final int nitroCap = 300;
+  private static final int quantumCap = 120;
   private static final int slots = 4;
-  private static final int maxVehicles = 8;
-  private static final int maxTankers = 4;
+  private static final int numVehicles = 8;
+  private static final int numTankers = 2;
+  private static final int maxRounds = 10;
 
   public static void main(String[] args) {
-    if (args.length < 2) {
-      System.out.println("Usage: 'java Simulation <#vehicles> <#tankers>'\nExiting...");
+    if (args.length < 1) {
+      System.out.println("Usage: 'java Simulation <# vehicle rounds>'\nExiting...");
       System.exit(-1);
     }
-    int numVehicles = (Integer.parseInt(args[0]) < maxVehicles) ? Integer.parseInt(args[0]) : maxVehicles;
-    int numTankers = (Integer.parseInt(args[1]) < maxTankers) ? Integer.parseInt(args[1]) : maxTankers;
+    int rounds = (Integer.parseInt(args[0]) < maxRounds) ? Integer.parseInt(args[0]) : maxRounds;
     FuelStation station = new FuelStation(nitroCap, quantumCap, slots);
     boolean type = true;
 
     for (int i = 0; i < numVehicles; i++) {
-      Vehicle vehicle = new Vehicle(station, ("vehicle " + i), 5);
+      Vehicle vehicle = new Vehicle(station, ("vehicle " + i), rounds);
       new Thread(vehicle).start();
     }
     for (int i = 0; i < numTankers; i++) {
-      FuelTank tanker = new FuelTank(station, ("tanker" + i), type);
+      FuelTank tanker = new FuelTank(station, ("tanker" + i), (rounds / 2), type);
       new Thread(tanker).start();
       type = !type;
     }
