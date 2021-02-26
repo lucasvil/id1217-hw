@@ -1,7 +1,7 @@
 public class Simulation {
   private static final int nitroCap = 100;
   private static final int quantumCap = 40;
-  private static final int slots = 3;
+  private static final int slots = 4;
   private static final int maxVehicles = 8;
   private static final int maxTankers = 4;
 
