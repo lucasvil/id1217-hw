@@ -10,6 +10,7 @@ tmp/
 *.ko
 *.obj
 *.elf
+*.class
 
 # Linker output
 *.ilk
