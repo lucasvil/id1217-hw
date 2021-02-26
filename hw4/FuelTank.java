@@ -5,8 +5,8 @@ public class FuelTank implements Runnable {
   private final int quantumCap = 8;
   private final int nitrogenTank = 75;
   private final int quantumTank = 30;
+  private final String id;
   private FuelStation station;
-  private int id;
   private boolean type;
 
   /**
@@ -15,7 +15,7 @@ public class FuelTank implements Runnable {
    * @param id      - tanker id
    * @param type    - true=nitrogen, false=quantum
    */
-  public FuelTank(FuelStation station, int id, boolean type) {
+  public FuelTank(FuelStation station, String id, boolean type) {
     this.station = station;
     this.id = id;
     this.type = type;

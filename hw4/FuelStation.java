@@ -17,16 +17,16 @@ public class FuelStation {
     this.reservedNitrogen = new AtomicInteger(0);
   }
 
-  public void refuel(int id, int nitrogenAmmount, int quantumAmmount) throws InterruptedException {
+  public void refuel(String id, int nitrogenAmmount, int quantumAmmount) throws InterruptedException {
     // take parking space
     synchronized (parking) {
       while ((occupiedSlots.get() >= slotsCap) || !isFuel(nitrogenAmmount, quantumAmmount)) {
-        System.out.println(id + " waiting");
+        System.out.println(id + " is waiting");
         parking.wait();
       }
       occupiedSlots.getAndIncrement();
       reserveFuel(nitrogenAmmount, quantumAmmount);
-      System.out.printf("%d has taken a spot (%d/%d).\n", id, occupiedSlots.get(), slotsCap);
+      System.out.printf("%s has taken a spot (%d/%d).\n", id, occupiedSlots.get(), slotsCap);
     }
     getFuel(nitrogenAmmount, quantumAmmount);
     releaseSpot(id);
@@ -35,38 +35,37 @@ public class FuelStation {
     }
   }
 
-  public void refillNitrogenTank(int id, int nitrogenRefill) throws InterruptedException {
+  public void refillNitrogenTank(String id, int nitrogenRefill) throws InterruptedException {
     synchronized (fuelTank) {
       while (((nitrogenCap - nitrogenLevel.get()) < nitrogenRefill)) {
         fuelTank.wait();
       }
       putFuel(nitrogenRefill, 0);
-      System.out.println("tanker %d has refueled nitrogen tank!");
-      System.out.printf("nitrogen: %d/%d (+%d), quantum: %d/%d\n", nitrogenLevel.get(), nitrogenCap, nitrogenRefill,
-          quantumLevel.get(), quantumCap);
+      System.out.printf("**%s has refueled nitrogen tank!**\n**nitrogen: %d/%d (+%d)**\n", id, nitrogenLevel.get(),
+          nitrogenCap, nitrogenRefill);
     }
     synchronized (parking) {
       parking.notifyAll();
     }
   }
 
-  public void refillQuantumTank(int id, int quantumRefill) throws InterruptedException {
+  public void refillQuantumTank(String id, int quantumRefill) throws InterruptedException {
     synchronized (fuelTank) {
       while (((quantumCap - quantumLevel.get()) < quantumRefill)) {
         fuelTank.wait();
       }
       putFuel(0, quantumRefill);
-      System.out.println("tanker %d has refueled quantum tank!");
-      System.out.printf("nitrogen: %d/%d, quantum: %d/%d (+%d)\n", nitrogenLevel.get(), nitrogenCap, quantumLevel.get(),
+      System.out.printf("**%s has refueled quantum tank!**\n**quantum: %d/%d (+%d)**\n", id, quantumLevel.get(),
           quantumCap, quantumRefill);
+
     }
     synchronized (parking) {
       parking.notifyAll();
     }
   }
 
-  private void releaseSpot(int id) {
-    System.out.println(id + " releasing a spot.");
+  private void releaseSpot(String id) {
+    System.out.printf("%s is driving away. (%d/%d)\n", id, occupiedSlots.get(), slotsCap);
     synchronized (parking) {
       parking.notify();
       occupiedSlots.getAndDecrement();

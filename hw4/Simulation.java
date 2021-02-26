@@ -16,11 +16,11 @@ public class Simulation {
     boolean type = true;
 
     for (int i = 0; i < numVehicles; i++) {
-      Vehicle vehicle = new Vehicle(station, i, 5);
+      Vehicle vehicle = new Vehicle(station, ("vehicle " + i), 5);
       new Thread(vehicle).start();
     }
     for (int i = 0; i < numTankers; i++) {
-      FuelTank tanker = new FuelTank(station, i, type);
+      FuelTank tanker = new FuelTank(station, ("tanker" + i), type);
       new Thread(tanker).start();
       type = !type;
     }

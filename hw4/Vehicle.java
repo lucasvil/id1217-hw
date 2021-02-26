@@ -3,10 +3,11 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Vehicle implements Runnable {
   private final int nitroCap = 20;
   private final int quantumCap = 8;
-  private final int id, rounds;
+  private final int rounds;
+  private final String id;
   private FuelStation station;
 
-  public Vehicle(FuelStation station, int id, int rounds) {
+  public Vehicle(FuelStation station, String id, int rounds) {
     this.station = station;
     this.id = id;
     this.rounds = rounds;
