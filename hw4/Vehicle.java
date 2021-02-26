@@ -16,7 +16,7 @@ public class Vehicle implements Runnable {
   public void run() {
     ThreadLocalRandom rand = ThreadLocalRandom.current();
     int nitrogen, quantum;
-    boolean type;
+    boolean coin;
     for (int i = 0; i < this.rounds; i++) {
       // vehicle travelling
       try {
@@ -24,12 +24,12 @@ public class Vehicle implements Runnable {
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
-      // make sure always at least one fuel type is needed
-      type = rand.nextBoolean();
+      // flip a coin to make sure always at least one fuel type is needed
+      coin = rand.nextBoolean();
 
       // get needed fuel
-      nitrogen = rand.nextInt((type ? 1 : 0), nitroCap);
-      quantum = rand.nextInt((type ? 0 : 1), quantumCap);
+      nitrogen = rand.nextInt((coin ? 1 : 0), nitroCap);
+      quantum = rand.nextInt((coin ? 0 : 1), quantumCap);
 
       try {
         // refuel vehicle...

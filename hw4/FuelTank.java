@@ -26,12 +26,12 @@ public class FuelTank implements Runnable {
       try {
         Thread.sleep(rand.nextInt(5000, 10000));
 
-        // make sure always at least one fuel type is needed
+        // flip a coin to make sure always at least one fuel type is needed
         coin = rand.nextBoolean();
 
         // get needed fuel
         fuel = coin ? this.nitrogenTank : this.quantumTank;
-        nitrogen = rand.nextInt((type ? 1 : 0), nitroCap);
+        nitrogen = rand.nextInt((coin ? 1 : 0), nitroCap);
         quantum = rand.nextInt((coin ? 0 : 1), quantumCap);
 
         // check tanker type and deposit fuel
