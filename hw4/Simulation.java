@@ -1,7 +1,7 @@
 public class Simulation {
   private static final int nitroCap = 300;
   private static final int quantumCap = 120;
-  private static final int slots = 4;
+  private static final int slots = 3;
   private static final int numVehicles = 8;
   private static final int numTankers = 2;
   private static final int maxRounds = 10;
@@ -20,7 +20,7 @@ public class Simulation {
       new Thread(vehicle).start();
     }
     for (int i = 0; i < numTankers; i++) {
-      FuelTank tanker = new FuelTank(station, ("tanker" + i), (rounds / 2), type);
+      FuelTank tanker = new FuelTank(station, ("tanker" + i), rounds, type);
       new Thread(tanker).start();
       type = !type;
     }

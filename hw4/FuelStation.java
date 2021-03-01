@@ -19,24 +19,21 @@ public class FuelStation {
   }
 
   public void refuel(String id, int nitrogenAmmount, int quantumAmmount) throws InterruptedException {
-    // check theres enough in tankers
-    while (!isFuel(nitrogenAmmount, quantumAmmount)) {
+    // try to reserve some fuel
+    while (!reserveFuel(nitrogenAmmount, quantumAmmount)) {
       synchronized (refuel) {
         System.out.println(id + " is waiting (refuel)");
         refuel.wait();
       }
     }
-    // reserve fuel ammount before withdrawing
-    reserveFuel(nitrogenAmmount, quantumAmmount);
 
     // try to park
-    while (!isParking()) {
+    while (!getParking()) {
       synchronized (parking) {
         System.out.println(id + " is waiting (parking)");
         parking.wait();
       }
     }
-    occupiedSlots.getAndIncrement();
     System.out.printf("%s has taken a spot (%d/%d).\n", id, occupiedSlots.get(), slotsCap);
 
     // refuel and then leave
@@ -88,11 +85,23 @@ public class FuelStation {
     }
   }
 
-  private void reserveFuel(int nitrogenAmmount, int quantumAmmount) {
-    if (nitrogenAmmount > 0)
-      this.reservedNitrogen.addAndGet(nitrogenAmmount);
-    if (quantumAmmount > 0)
-      this.reservedQuantum.addAndGet(quantumAmmount);
+  private synchronized boolean reserveFuel(int nitrogenAmmount, int quantumAmmount) {
+    if (isFuel(nitrogenAmmount, quantumAmmount)) {
+      if (nitrogenAmmount > 0)
+        this.reservedNitrogen.addAndGet(nitrogenAmmount);
+      if (quantumAmmount > 0)
+        this.reservedQuantum.addAndGet(quantumAmmount);
+      return true;
+    }
+    return false;
+  }
+
+  private synchronized boolean getParking() {
+    if (isParking()) {
+      occupiedSlots.getAndIncrement();
+      return true;
+    }
+    return false;
   }
 
   private void getFuel(int nitrogenAmmount, int quantumAmmount, String id) {
@@ -127,7 +136,7 @@ public class FuelStation {
       this.quantumLevel.addAndGet(quantumRefill);
   }
 
-  private synchronized boolean isFuel(int nitrogenAmmount, int quantumAmmount) {
+  private boolean isFuel(int nitrogenAmmount, int quantumAmmount) {
     if ((this.nitrogenLevel.get() - this.reservedNitrogen.get()) < nitrogenAmmount)
       return false;
     if ((this.quantumLevel.get() - this.reservedQuantum.get()) < quantumAmmount)
@@ -135,7 +144,7 @@ public class FuelStation {
     return true;
   }
 
-  private synchronized boolean isParking() {
+  private boolean isParking() {
     if ((this.slotsCap <= this.occupiedSlots.get()))
       return false;
     return true;
