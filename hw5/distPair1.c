@@ -27,7 +27,7 @@ void teacher(int numTasks) {
   int numStudents = 0;
 
   // loop through each student
-  for (int i = 0; i < (numTasks); i++) {
+  for (int i = 1; i < (numTasks); i++) {
     // wait for student message
     MPI_Recv(&group[numStudents++], 1, MPI_INT, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
@@ -36,7 +36,7 @@ void teacher(int numTasks) {
       MPI_Send(&group[1], 1, MPI_INT, group[0], 0, MPI_COMM_WORLD);
       MPI_Send(&group[0], 1, MPI_INT, group[1], 0, MPI_COMM_WORLD);
       numStudents = 0;
-    } else if ((i == numTasks) && numStudents < 2) {
+    } else if ((i == (numTasks - 1))) {
       // no partner, no students left
       MPI_Send(&group[0], 1, MPI_INT, group[0], 0, MPI_COMM_WORLD);
     }
